@@ -7,84 +7,62 @@ import net.risingworld.api.objects.Player;
 import net.risingworld.api.events.Listener;
 import net.risingworld.api.events.EventMethod;
 
-/**
- *
- * @author Gopher
- */
 public class AdminInvisibility extends Plugin implements Listener {
 
-    
-        @Override
+    @Override
     public void onEnable(){
         //Register event listener
         registerEventListener(this);
         System.out.println("AdminVis enabled on server startup!");
     }
 
-
     @Override
     public void onDisable(){
         System.out.println("AdminVis disabled on server shutdown!");
     }
-    
-    
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        // TODO code application logic here
-    }
-    
+     
+    @EventMethod
+    public void onCommand(PlayerCommandEvent event){
+        
+        Player player = event.getPlayer();
+        Server server = getServer();
 
-    
-	@EventMethod
-	public void onCommand(PlayerCommandEvent event){
-            Player player = event.getPlayer();
-            Server server = getServer();
-            
-            if (player.isAdmin()){
-                // System.out.println("player is admin"); //TEST LINE
-            } else {
-                player.sendTextMessage("[#B4B004]You are not an admin!");
-                player.showStatusMessage("[#B4B004]" + player.getName() + ", [#FF0000]you are not allowed to use invisibility commands! (You are not an admin!)", 10);
-            }
+        //split the command
+        String[] cmd = event.getCommand().split(" ");
+        
+        //now check if the command starts with "/vishelp"
+        if(cmd[0].equals("/vishelp") && player.isAdmin()) {
+        player.sendTextMessage("VisHelp: [#B4B004]/vistatus[#FFFFFF] - Gets your current visibility status (invisible, visible)");
+        player.sendTextMessage("VisHelp: [#B4B004]/invisible[#FFFFFF] - Make your player invisible to others");
+        player.sendTextMessage("VisHelp: [#B4B004]/visible[#FFFFFF] - Make your player visible to others");
 
-                        
-            
-	    //split the command
-	    String[] cmd = event.getCommand().split(" ");
-	
-            
-	    //now check if the command starts with "/vishelp"
-            if(cmd[0].equals("/vishelp") && player.isAdmin()) {
-            player.sendTextMessage("VisHelp: [#B4B004]/vistatus[#FFFFFF] - Gets your current visibility status (invisible, visible)");
-            player.sendTextMessage("VisHelp: [#B4B004]/invisible[#FFFFFF] - Make your player invisible to others");
-            player.sendTextMessage("VisHelp: [#B4B004]/visible[#FFFFFF] - Make your player visible to others");
-            
-            
-            }
-	    //now check if the command starts with "/invisible"
-            if(cmd[0].equals("/vistatus") && player.isAdmin()) {
-            player.sendTextMessage("Invisibility status: " + player.isInvisible());
-            player.playGameSound("warning_proximity");
-
-            }
-	    //now check if the command starts with "/invisible"
-            if(cmd[0].equals("/invisible") && player.isAdmin()) {
-            player.sendTextMessage("You made yourself invisible.");
-            player.playGameSound("trade_success");
-
-            event.getPlayer().setInvisible(true);
-            }
-            //now check if the command starts with "/visible"
-            if(cmd[0].equals("/visible") && player.isAdmin()) {
-            player.sendTextMessage("You made yourself visible.");
-            player.playGameSound("trade_success");
-
-            event.getPlayer().setInvisible(false);
-            
-
-            
-            }
         }
+        
+        //now check if the command starts with "/invisible"
+        else if(cmd[0].equals("/vistatus") && player.isAdmin()) {
+        player.sendTextMessage("Invisibility status: " + player.isInvisible());
+        player.playGameSound("warning_proximity");
+
+        }
+        //now check if the command starts with "/invisible"
+        else if(cmd[0].equals("/invisible") && player.isAdmin()) {
+        player.sendTextMessage("You made yourself invisible.");
+        player.playGameSound("trade_success");
+
+        player.setInvisible(true);
+        }
+        //now check if the command starts with "/visible"
+        else if(cmd[0].equals("/visible") && player.isAdmin()) {
+        player.sendTextMessage("You made yourself visible.");
+        player.playGameSound("trade_success");
+
+        player.setInvisible(false);
+
+        }
+        else if((cmd[0].equals("/vistatus") || cmd[0].equals("/invisible") || cmd[0].equals("/visible") || cmd[0].equals("/vishelp")) && ! player.isAdmin()){
+            
+            player.sendTextMessage("[#B4B004]You are not an admin!");
+            player.showStatusMessage("[#B4B004]" + player.getName() + ", [#FF0000]you are not allowed to use invisibility commands! (You are not an admin!)", 10);
+        }
+    }
 }
